@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model sfo_data {
+  id                          Int       @id @default(autoincrement())
+  data_loaded_at              DateTime? @db.Timestamp(6)
+  activity_period_start_date  DateTime? @db.Date
+  data_as_of                  DateTime? @db.Date
+  activity_period             String?   @db.Char(6)
+  operating_airline           String?   @db.VarChar(500)
+  operating_airline_iata_code String?   @db.Char(100)
+  published_airline           String?   @db.VarChar(500)
+  published_airline_iata_code String?   @db.Char(100)
+  geo_summary                 String?   @db.VarChar(50)
+  geo_region                  String?   @db.VarChar(50)
+  activity_type_code          String?   @db.VarChar(50)
+  price_category_code         String?   @db.VarChar(50)
+  terminal                    String?   @db.VarChar(50)
+  boarding_area               String?   @db.VarChar(100)
+  passenger_count             Int?
+}
