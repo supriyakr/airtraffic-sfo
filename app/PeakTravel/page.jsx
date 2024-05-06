@@ -1,4 +1,5 @@
 import PeakMonthsPlot from "./PeakMonthsPlot";
+import prisma from "@/lib/prisma";
 
 async function getPeakMonths(){
   try{
@@ -30,8 +31,16 @@ async function getPeakMonths(){
         month,
         passenger_count
       }));
-      console.log("formattedResult",formattedResult);
-      return formattedResult;
+      
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  const formattedData=formattedResult.map(item => {
+  const monthIndex = parseInt(item.month.slice(4, 6)) - 1;
+  const monthName = monthNames[monthIndex];
+  return { month: monthName, passenger_count: item.passenger_count };
+   });
+   console.log("formattedData",formattedData);
+      return formattedData;
  }
  catch(err){
      console.error(err);
