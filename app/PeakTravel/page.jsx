@@ -1,4 +1,5 @@
 import PeakMonthsPlot from "./PeakMonthsPlot";
+import prisma from "@/lib/prisma";
 
 async function getPeakMonths(){
   try{
@@ -14,16 +15,16 @@ async function getPeakMonths(){
           activity_period: true,
           passenger_count:true
         }
-      });
+    });
    
-      const groupByAndSum = (arr, groupBy, sumProp) => {
-        return arr.reduce((acc, obj) => {
-          const key = obj[groupBy];
-          const value = obj[sumProp];
-          acc[key] = (acc[key] || 0) + value;
-          return acc;
-        }, {});
-      };
+    const groupByAndSum = (arr, groupBy, sumProp) => {
+      return arr.reduce((acc, obj) => {
+        const key = obj[groupBy];
+        const value = obj[sumProp];
+        acc[key] = (acc[key] || 0) + value;
+        return acc;
+      }, {});
+    };
       
       const result = groupByAndSum(peakMonths, 'activity_period', 'passenger_count');
       const formattedResult = Object.entries(result).map(([month, passenger_count]) => ({
