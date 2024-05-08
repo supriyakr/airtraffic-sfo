@@ -13,12 +13,15 @@ async function getPeakMonths(){
         },
         select: {
           activity_period: true,
-          passenger_count:true
+          passenger_count:true,
+          geo_summary:true
+          
         },
         orderBy:{
           activity_period:'asc'
         }
       });
+      
    
       const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
