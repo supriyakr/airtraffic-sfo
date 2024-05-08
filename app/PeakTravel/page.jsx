@@ -4,35 +4,53 @@ import prisma from "@/lib/prisma";
 async function getPeakMonths(){
   try{
     
-    const peakMonths = await prisma.sfo_data.findMany({
+    const data = await prisma.sfo_data.findMany({
         where: {
           activity_period_start_date: {
-            gte: new Date('2019-01-01'),
-            lte: new Date('2019-12-31')
+            gte: new Date('2000'),
+            lte: new Date('2024')
           }
         },
         select: {
           activity_period: true,
-          passenger_count:true
+          passenger_count:true,
+          geo_summary:true
+          
+        },
+        orderBy:{
+          activity_period:'asc'
         }
-    });
-   
-    const groupByAndSum = (arr, groupBy, sumProp) => {
-      return arr.reduce((acc, obj) => {
-        const key = obj[groupBy];
-        const value = obj[sumProp];
-        acc[key] = (acc[key] || 0) + value;
-        return acc;
-      }, {});
-    };
+      });
       
-      const result = groupByAndSum(peakMonths, 'activity_period', 'passenger_count');
-      const formattedResult = Object.entries(result).map(([month, passenger_count]) => ({
-        month,
-        passenger_count
-      }));
-      console.log("formattedResult",formattedResult);
-      return formattedResult;
+   
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+      const result = {};
+      
+      data.forEach(obj => {
+        const year = parseInt(obj.activity_period.slice(0, 4));
+        const month = parseInt(obj.activity_period.slice(4, 6));
+        const monthName = monthNames[month - 1];
+      
+        if (!result[year]) {
+          result[year] = [];
+        }
+      
+        const existingEntry = result[year].find(entry => entry.monthNumber === month);
+      
+        if (existingEntry) {
+          existingEntry.passenger_count += obj.passenger_count;
+        } else {
+          result[year].push({
+            year,
+            monthNumber: month,
+            monthName,
+            passenger_count: obj.passenger_count
+          });
+        }
+      });
+  //console.log(result);
+return result;
  }
  catch(err){
      console.error(err);
