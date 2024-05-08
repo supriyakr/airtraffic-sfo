@@ -2,7 +2,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import * as d3 from "d3";
 
-export default function PeakMonthsPlot({ peakMonths }) {
+
+export default function PeakMonthsPlot({peakMonths}) {
   const svgRef = useRef();
 
   useEffect(() => {
