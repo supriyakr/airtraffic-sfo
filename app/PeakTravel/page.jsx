@@ -37,7 +37,6 @@ async function getPeakMonths(){
  catch(err){
      console.error(err);
  }
-  
 }
 
 export default async function PeakTravel() {
@@ -45,9 +44,9 @@ export default async function PeakTravel() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
  
- <PeakMonthsPlot
-      peakMonths={peakMonths}
- ></PeakMonthsPlot>
+    <PeakMonthsPlot
+          peakMonths={peakMonths}
+    ></PeakMonthsPlot>
    
     
     </main>
