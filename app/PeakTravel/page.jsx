@@ -61,11 +61,16 @@ return result;
 export default async function PeakTravel() {
   const peakMonths = await getPeakMonths();
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
- 
- <PeakMonthsPlot
+    <main className="flex min-h-screen flex-col items-center bg-gray-900 text-white p-20">
+ <div className="grid mb-8">
+        <h2 className="text-3xl font-bold">Travel Trends in SFO</h2>
+      </div>
+      <div className="grid">
+      <PeakMonthsPlot
       peakMonths={peakMonths}
  ></PeakMonthsPlot>
+      </div>
+
    
     
     </main>
