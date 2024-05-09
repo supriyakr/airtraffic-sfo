@@ -123,7 +123,7 @@ export default function PeakMonthsPlot({peakMonths}) {
 
   return (
     <div>
-      <select id="selectButton"></select>
+      <select id="selectButton" style={{color:'black'}}></select>
       <svg ref={svgRef} />
     </div>
   );
