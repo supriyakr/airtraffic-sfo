@@ -12,6 +12,7 @@ const tiles = [
     { title: 'Airlines', path: '/MostFrequentAirlines' },
     { title: 'Destinations', path: '/MostFrequentDestinations' },
     { title: 'Passenger Traffic', path: '/PassengerTraffic' },
+    { title: 'SFO as a destination vs departure point', path: '/EnplanedDeplaned' },
   ];
   return (
     <div className="min-h-screen flex bg-gray-900 text-white">
