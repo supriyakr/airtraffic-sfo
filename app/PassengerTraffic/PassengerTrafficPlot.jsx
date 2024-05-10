@@ -22,25 +22,44 @@ function PassengerTrafficPlot({ terminalTrfc }) {
             // Append a group element for the pie chart
             const g = svg.append('g').attr('transform', `translate(${width / 2}, ${height / 2})`);
 
-            // Generate pie chart slices
-            const arcs = g.selectAll('arc').data(pie(terminalTrfc)).enter().append('g');
-
             // Draw each slice
+            const arcs = g.selectAll('arc')
+                .data(pie(terminalTrfc))
+                .enter()
+                .append('g');
+
+            const newColorScale = d3.scaleOrdinal().range(['#145C96', '#0EBEDD', '#709FA2', '#D5E7F1']);
+
             arcs.append('path')
                 .attr('d', arc)
-                .attr('fill', (d, i) => color(i));
+                .attr('fill', (d, i) => newColorScale(i))
+                .on('mouseover', function(d) {
+                    if (d.data) {
+                        const { terminal, passenger_count } = d.data;
+                        d3.select(this).transition().duration(200).attr('opacity', 0.7);
+                        svg.append('text')
+                            .attr('class', 'tooltip')
+                            .attr('x', width / 2)
+                            .attr('y', height / 2 - radius / 2)
+                            .attr('text-anchor', 'middle')
+                            .text(`${terminal}: ${passenger_count}`)
+                            .attr('font-size', '14px');
+                    }
+                })
+                .on('mouseout', function() {
+                    d3.select(this).transition().duration(200).attr('opacity', 1);
+                    svg.select('.tooltip').remove();
+                });
 
-            // Add labels
             arcs.append('text')
                 .attr('transform', d => `translate(${arc.centroid(d)})`)
                 .attr('text-anchor', 'middle')
-                .text(d => d.data.terminal);
-
+                .text(d => `${d.data.terminal}\n(${((d.endAngle - d.startAngle) / (2 * Math.PI) * 100).toFixed(0)}%)`);
         }
     }, [terminalTrfc]);
 
     return (
-        <svg ref={svgRef} width={400} height={400}></svg>
+        <svg ref={svgRef} width={500} height={500}></svg>
     );
 }
 

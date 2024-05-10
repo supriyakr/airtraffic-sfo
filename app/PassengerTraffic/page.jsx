@@ -50,9 +50,9 @@ export default async function PassengerTraffic() {
     const terminalTraffic = await getTerminalTraffic();
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-between p-24">
+        <main>
             <div>
-                <h1>Terminal Traffic Distribution</h1>
+                <h1>Passenger Traffic Distribution</h1>
                 <PassengerTrafficPlot terminalTrfc={terminalTraffic} />
             </div>
         </main>

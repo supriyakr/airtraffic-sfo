@@ -62,7 +62,23 @@ function TerminalTrafficPlot({ terminalTrfc }) {
         .attr('height', d => innerHeight - yScale(d.passenger_count))
         .attr('fill', d => colorScale(d.geo_summary))
         .attr('stroke', 'black')
-        .attr('stroke-width', 0.5);
+        .attr('stroke-width', 0.5)
+        // Add hover effect
+        .on('mouseover', function(d) {
+          d3.select(this).attr('fill', 'orange');
+          // Show number on hover
+          g.append('text')
+            .attr('class', 'hover-text')
+            .attr('x', xScale(d.terminal) + xScale.bandwidth() / 2)
+            .attr('y', yScale(d.passenger_count) - 10)
+            .attr('text-anchor', 'middle')
+            .text(d.passenger_count);
+        })
+        .on('mouseout', function() {
+          d3.select(this).attr('fill', d => colorScale(d.geo_summary));
+          // Remove number on hover out
+          svg.select('.hover-text').remove();
+        });
 
       // Create legend
       const legend = svg.selectAll(".legend")

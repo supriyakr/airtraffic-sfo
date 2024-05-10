@@ -53,7 +53,7 @@ export default async function TerminalTraffic() {
     const terminalTrafficData = await getTerminalGeoSummaryTraffic();
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-between p-24">
+        <main>
             <div>
                 <h1>Terminal Traffic Distribution</h1>
                 <TerminalTrafficPlot terminalTrfc={terminalTrafficData} />
