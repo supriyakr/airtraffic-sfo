@@ -49,8 +49,8 @@ export default async function PassengerTraffic() {
   const trafficData = await getPassengerTraffic();
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24 bg-navy">
-      <h1 style={{ fontSize: "36px", fontWeight: "bold", color: "white", marginBottom: "40px" }}>
-        Passenger Traffic at San Francisco International Airport
+      <h1 style={{ fontSize: "36px", fontWeight: "bold", color: "black", marginBottom: "40px" }}>
+      Distribution of Passenger Traffic across Terminals and Boarding Areas at San Francisco International Airport
       </h1>
       <PassengerTrafficPlot trafficData={trafficData}></PassengerTrafficPlot>
     </main>

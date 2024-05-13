@@ -9,91 +9,113 @@ export default function MostFrequentAirlinesPlot({ mostFrequentAirlines }) {
     if (mostFrequentAirlines && mostFrequentAirlines.length) {
       d3.select(svgRef.current).selectAll("*").remove();
 
-      const width = 700;
-      const height = 650;
-      const margin = 170;
-      const radius = Math.min(width, height) / 2 - margin;
+      const width = 800;
+      const height = 600;
 
       const svg = d3
         .select(svgRef.current)
         .attr("width", width)
         .attr("height", height)
         .append("g")
-        .attr("transform", `translate(${width / 2}, ${height / 2})`);
+        .attr("transform", `translate(${width / 2},${height / 2})`);
 
-      const color = d3
-        .scaleOrdinal()
-        .domain(mostFrequentAirlines.map((a) => a.airline))
-        .range(d3.schemeCategory10);
+      const color = d3.scaleOrdinal(d3.schemeCategory10);
 
-      const pie = d3
-        .pie()
-        .value((d) => parseFloat(d.percentage.replace("%", "")))
-        .sort(null);
+      // Adjust the radius scale to make the bubbles larger
+      const radiusScale = d3
+        .scaleSqrt()
+        .domain([0, d3.max(mostFrequentAirlines, (d) => d.count)])
+        .range([30, 100]); // Increase the range to make the bubbles bigger
 
-      const data_ready = pie(mostFrequentAirlines);
+      const tooltip = d3
+        .select("body")
+        .append("div")
+        .style("position", "absolute")
+        .style("background", "#fff")
+        .style("border", "1px solid #ccc")
+        .style("padding", "10px")
+        .style("box-shadow", "0 2px 10px rgba(0,0,0,0.1)")
+        .style("opacity", 0);
 
-      // Shape helper to build arcs
-      const arcGenerator = d3.arc().innerRadius(0).outerRadius(radius);
+      const simulation = d3
+        .forceSimulation(mostFrequentAirlines)
+        .force("charge", d3.forceManyBody().strength(5))
+        .force("center", d3.forceCenter(0, 0))
+        .force(
+          "collision",
+          d3.forceCollide().radius((d) => radiusScale(d.count) + 2)
+        )
+        .on("tick", ticked);
 
-      const outerArc = d3
-        .arc()
-        .innerRadius(radius * 1.1)
-        .outerRadius(radius * 1.1);
+      function ticked() {
+        const u = svg
+          .selectAll("circle")
+          .data(mostFrequentAirlines)
+          .join("circle")
+          .attr("r", (d) => radiusScale(d.count))
+          .attr("fill", (d) => color(d.airline))
+          .attr("stroke", "white")
+          .attr("stroke-width", 1.5)
+          .attr("cx", (d) => d.x)
+          .attr("cy", (d) => d.y)
+          .on("mouseover", function (event, d) {
+            d3.select(this).style("opacity", 0.7);
+            tooltip
+              .html(
+                `Airline: ${d.airline}<br>Flights: ${d.count}<br>Percentage: ${d.percentage}`
+              )
+              .style("left", event.pageX + 5 + "px")
+              .style("top", event.pageY + 5 + "px")
+              .style("opacity", 1);
+          })
+          .on("mousemove", function (event) {
+            tooltip
+              .style("left", event.pageX + 5 + "px")
+              .style("top", event.pageY + 5 + "px");
+          })
+          .on("mouseout", function () {
+            d3.select(this).style("opacity", 1);
+            tooltip.style("opacity", 0);
+          });
 
-      // Build the pie chart
-      svg
-        .selectAll("allSlices")
-        .data(data_ready)
-        .enter()
-        .append("path")
-        .attr("d", arcGenerator)
-        .attr("fill", (d) => color(d.data.airline))
-        .attr("stroke", "white")
-        .style("stroke-width", "2px")
-        .style("opacity", 0.7);
+        const labels = svg
+          .selectAll("text")
+          .data(mostFrequentAirlines)
+          .join("text")
+          .attr("x", (d) => d.x)
+          .attr("y", (d) => d.y)
+          .attr("dy", ".3em")
+          .attr("text-anchor", "middle")
+          .style("fill", "white")
+          .style("font-size", 12)
+          .text((d) => d.airline)
+          .each(wrapText); // Ensure the text wraps properly
 
-      // Add lines connecting the labels to the slices
-      svg
-        .selectAll("allPolylines")
-        .data(data_ready)
-        .enter()
-        .append("polyline")
-        .attr("points", function (d) {
-          const posA = arcGenerator.centroid(d);
-          const posB = outerArc.centroid(d);
-          const posC = outerArc.centroid(d);
-          posC[0] = radius * 0.97 * (midAngle(d) < Math.PI ? 1 : -1);
-          return [posA, posB, posC];
-        })
-        .style("fill", "none")
-        .attr("stroke", "black")
-        .style("stroke-width", 1);
-
-      // Add labels
-      svg
-        .selectAll("allLabels")
-        .data(data_ready)
-        .enter()
-        .append("text")
-        .text((d) => {
-          if (d.data.airline == "Others") {
-            return `${d.data.airline} ${d.data.included} countries (${d.data.percentage})`;
-          } else {
-            return `${d.data.airline} (${d.data.percentage})`;
+        function wrapText(d) {
+          const text = d3.select(this);
+          const words = d.airline.split(/\s+/).reverse();
+          let word;
+          let line = [];
+          const lineHeight = 1.1; // ems
+          const x = text.attr("x");
+          const y = text.attr("y");
+          let tspan = text.text(null).append("tspan").attr("x", x).attr("y", y);
+          while ((word = words.pop())) {
+            line.push(word);
+            tspan.text(line.join(" "));
+            if (tspan.node().getComputedTextLength() > radiusScale(d.count) * 2) {
+              line.pop();
+              tspan.text(line.join(" "));
+              line = [word];
+              tspan = text
+                .append("tspan")
+                .attr("x", x)
+                .attr("y", y)
+                .attr("dy", lineHeight + "em")
+                .text(word);
+            }
           }
-        })
-        .attr("transform", function (d) {
-          const pos = outerArc.centroid(d);
-          pos[0] = radius * 0.7 * (midAngle(d) < Math.PI ? 1 : -1);
-          return `translate(${pos})`;
-        })
-        .style("text-anchor", (d) => (midAngle(d) < Math.PI ? "start" : "end"))
-        .style("font-size", 14);
-
-      // Calculate the angle to determine the label alignment
-      function midAngle(d) {
-        return d.startAngle + (d.endAngle - d.startAngle) / 2;
+        }
       }
     }
   }, [mostFrequentAirlines]);

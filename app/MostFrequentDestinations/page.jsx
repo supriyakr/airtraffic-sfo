@@ -35,14 +35,11 @@ async function getMostFrequentDestinations() {
       0
     );
 
-    const regionPercentages = Object.keys(regionCounts).map((key) => ({
-      geo_region: key,
-      percentage: ((regionCounts[key] / totalCount) * 100).toFixed(2) + "%",
+    const regionPercentages = sortedRegions.map((region) => ({
+      ...region,
+      percentage: ((region.count / totalCount) * 100).toFixed(2) + "%",
     }));
 
-    regionPercentages.sort(
-      (a, b) => parseFloat(b.percentage) - parseFloat(a.percentage)
-    );
     console.log("regionPercentages", regionPercentages);
     return regionPercentages;
   } catch (err) {
@@ -53,9 +50,9 @@ async function getMostFrequentDestinations() {
 export default async function MostFrequentDestinations() {
   const mostFrequentDestinations = await getMostFrequentDestinations();
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <h1 style={{ fontSize: "36px", fontWeight: "bold" }}>
-        Most Frequent Destinations At San Francisco International Airport
+    <main className="flex min-h-screen flex-col items-center justify-between p-24 bg-navy text-white">
+      <h1 className="text-black" style={{ fontSize: "36px", fontWeight: "bold" }}>
+        Most Frequent Destinations From San Francisco International Airport
       </h1>
       <MostFrequentDestinationsPlot
         mostFrequentDestinations={mostFrequentDestinations}

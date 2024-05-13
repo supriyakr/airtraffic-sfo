@@ -40,7 +40,7 @@ export default async function EnplanedDeplaned() {
   const enplanedDeplanedData = await getEnplanedDeplanedData();
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24 bg-navy">
-      <h1 style={{ fontSize: "36px", fontWeight: "bold", color: "white" }}>
+      <h1 style={{ fontSize: "36px", fontWeight: "bold", color: "black" }}>
         Enplaned/Deplaned Passenger Count at San Francisco International Airport
       </h1>
       <EnplanedDeplanedPlot data={enplanedDeplanedData}></EnplanedDeplanedPlot>

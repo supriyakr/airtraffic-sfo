@@ -49,13 +49,13 @@ export default function EnplanedDeplanedPlot({ data }) {
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x).tickFormat(d => d).tickSizeOuter(0))
         .selectAll("text")
-        .attr("fill", "white")
+        .attr("fill", "black")
         .style("font-weight", "bold");
 
       svg.append("g")
         .call(d3.axisLeft(y).tickFormat(d => `${d / 1000000}M`).tickSizeOuter(0))
         .selectAll("text")
-        .attr("fill", "white")
+        .attr("fill", "black")
         .style("font-weight", "bold");
 
       // Tooltip
@@ -77,7 +77,7 @@ export default function EnplanedDeplanedPlot({ data }) {
           .datum(enplanedData)
           .attr("class", "line-enplaned")
           .attr("fill", "none")
-          .attr("stroke", "yellow")
+          .attr("stroke", "green")
           .attr("stroke-width", 2)
           .attr("d", line);
 
@@ -88,7 +88,7 @@ export default function EnplanedDeplanedPlot({ data }) {
           .attr("cx", d => x(d.year) + x.bandwidth() / 2)
           .attr("cy", d => y(d.value))
           .attr("r", 3)
-          .attr("fill", "yellow")
+          .attr("fill", "green")
           .on("mouseover", function (event, d) {
             tooltip.style("visibility", "visible");
           })
@@ -166,9 +166,9 @@ export default function EnplanedDeplanedPlot({ data }) {
         .attr("transform", `translate(${width + 20}, 0)`);
 
       const legendItems = [
-        { color: "yellow", text: "Enplaned passengers", key: "enplaned" },
-        { color: "red", text: "Deplaned passengers", key: "deplaned" },
-        { color: "cyan", text: "Thru/Transit passengers", key: "transit" },
+        { color: "green", text: "Enplaned ", key: "enplaned" },
+        { color: "red", text: "Deplaned ", key: "deplaned" },
+        { color: "cyan", text: "Thru/Transit ", key: "transit" },
       ];
 
       legendItems.forEach((item, i) => {
@@ -191,7 +191,7 @@ export default function EnplanedDeplanedPlot({ data }) {
           .text(item.text)
           .style("font-size", "12px")
           .attr("alignment-baseline", "middle")
-          .attr("fill", "white")
+          .attr("fill", "black")
           .style("font-weight", "bold")
           .on("click", () => {
             setSelectedLines(prev => ({

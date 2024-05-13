@@ -35,13 +35,13 @@ export default function PassengerTrafficPlot({ trafficData }) {
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x).tickSize(0))
         .selectAll("text")
-        .style("fill", "white")
+        .style("fill", "black")
         .style("font-weight", "bold");
 
       svg.append("g")
         .call(d3.axisLeft(y).tickFormat(d => `${d / 1000}K`))
         .selectAll("text")
-        .style("fill", "white")
+        .style("fill", "black")
         .style("font-weight", "bold");
 
       const color = d3.scaleOrdinal()
@@ -100,7 +100,7 @@ export default function PassengerTrafficPlot({ trafficData }) {
         .attr("y", -10)
         .text("Boarding Areas:")
         .style("font-size", "14px")
-        .style("fill", "white")
+        .style("fill", "black")
         .style("font-weight", "bold")
         .attr("alignment-baseline", "middle");
 
@@ -117,7 +117,7 @@ export default function PassengerTrafficPlot({ trafficData }) {
           .attr("y", i * 20 + 9)
           .text(key)
           .style("font-size", "12px")
-          .style("fill", "white")
+          .style("fill", "black")
           .style("font-weight", "bold")
           .attr("alignment-baseline", "middle");
       });
@@ -128,9 +128,9 @@ export default function PassengerTrafficPlot({ trafficData }) {
         .attr("text-anchor", "middle")
         .style("font-size", "16px")
         .style("text-decoration", "underline")
-        .style("fill", "white")
+        .style("fill", "black")
         .style("font-weight", "bold")
-        .text(" P   Didd   Distribution of Passenger Traffic across Terminals and Boarding Areas at San Francisco International Airport")
+        .text("")
         .attr("dy", "-2em");
     }
   }, [trafficData]);
