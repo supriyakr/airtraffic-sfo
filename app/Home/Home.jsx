@@ -5,7 +5,7 @@ import backgroundImg from '@/public/sf.jpg';
 
 function Home() {
   const tiles = [
-    { title: 'Travel Trends Across Years', path: '/PeakTravel' },
+    { title: 'Travel Trends Across Months', path: '/PeakTravel' },
     { title: 'Airlines Distribution in Flight Traffic', path: '/MostFrequentAirlines' },
     { title: 'Destination Distribution of Departing Flights', path: '/MostFrequentDestinations' },
     { title: 'Passenger Traffic across Terminals', path: '/PassengerTraffic' },
