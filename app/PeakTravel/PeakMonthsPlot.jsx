@@ -87,13 +87,13 @@ export default function PeakMonthsPlot({peakMonths}) {
           .style("fill", "#69b3a2")
           .on("mouseover", function (event, d) {
             // Remove any existing tooltip
-            d3.select(".tooltip").remove();
+            d3.select(".tooltip2").remove();
       
             // Add tooltip on mouseover
             const tooltip = d3
               .select("body")
               .append("div")
-              .attr("class", "tooltip")
+              .attr("class", "tooltip2")
               .style("position", "absolute")
               .style("background-color", "white")
               .style("border", "1px solid black")
@@ -109,7 +109,7 @@ export default function PeakMonthsPlot({peakMonths}) {
           })
           .on("mouseleave", function () {
             // Remove tooltip on mouseleave
-            d3.select(".tooltip").remove();
+            d3.select(".tooltip2").remove();
           });
               
       
