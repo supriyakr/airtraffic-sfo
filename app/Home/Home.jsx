@@ -26,7 +26,7 @@ function Home() {
         />
       </div>
       <div className="z-10 m-auto pl-10">
-        <h1 className="text-5xl font-bold">San Francisco International Airport Data Visualization! ✈️</h1>
+        <h1 className="text-5xl font-bold">SFO Airport Data Visualization! ✈️</h1>
       </div>
       <div className="z-10 m-auto pr-10 flex flex-col items-center space-y-4">
         {tiles.map((tile, index) => (
