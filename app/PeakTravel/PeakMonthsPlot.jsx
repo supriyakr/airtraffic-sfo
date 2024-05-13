@@ -38,7 +38,8 @@ export default function PeakMonthsPlot({peakMonths}) {
         const x = d3
           .scaleBand()
           .domain(data[2000].map((d) => d.monthName))
-          .range([0, width]);
+          .range([0,width])
+          .padding(1);
         svg
           .append("g")
           .attr("transform", "translate(0," + height + ")")
@@ -83,7 +84,35 @@ export default function PeakMonthsPlot({peakMonths}) {
           .attr("cx", (d) => x(d.monthName))
           .attr("cy", (d) => y(d.passenger_count))
           .attr("r", 7)
-          .style("fill", "#69b3a2");
+          .style("fill", "#69b3a2")
+          .on("mouseover", function (event, d) {
+            // Remove any existing tooltip
+            d3.select(".tooltip").remove();
+      
+            // Add tooltip on mouseover
+            const tooltip = d3
+              .select("body")
+              .append("div")
+              .attr("class", "tooltip")
+              .style("position", "absolute")
+              .style("background-color", "white")
+              .style("border", "1px solid black")
+              .style("padding", "5px")
+              .style("border-radius", "5px");
+      
+            tooltip
+              .html(
+                `<strong>Month:</strong> ${d.monthName}<br><strong>Passenger Count:</strong> ${d.passenger_count}`
+              )
+              .style("left", event.pageX + 10 + "px")
+              .style("top", event.pageY - 28 + "px");
+          })
+          .on("mouseleave", function () {
+            // Remove tooltip on mouseleave
+            d3.select(".tooltip").remove();
+          });
+              
+      
 
         // A function that update the chart
         function update(selectedGroup) {
@@ -123,7 +152,7 @@ export default function PeakMonthsPlot({peakMonths}) {
 
   return (
     <div>
-      <select id="selectButton" style={{color:'black'}}></select>
+      <select id="selectButton" style={{color:'black', backgroundColor:'bisque'}}></select>
       <svg ref={svgRef} />
     </div>
   );
