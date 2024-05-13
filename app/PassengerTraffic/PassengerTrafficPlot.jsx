@@ -64,3 +64,4 @@ function PassengerTrafficPlot({ terminalTrfc }) {
 }
 
 export default PassengerTrafficPlot;
+

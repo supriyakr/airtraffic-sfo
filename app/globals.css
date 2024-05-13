@@ -2,3 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
+.bg-navy {
+  background-color: #001f3f;
+}
