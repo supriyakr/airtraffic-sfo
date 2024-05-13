@@ -16,13 +16,13 @@ function Home() {
   return (
     <div className="relative min-h-screen bg-[#FFFFED] flex justify-between">
       <div className="absolute inset-0 z-0">
-        <Image 
-          src={backgroundImg} 
-          alt="San Francisco" 
-          fill 
-          style={{ objectFit: 'cover' }} 
-          quality={100} 
-          className="opacity-50" 
+        <Image
+          src={backgroundImg}
+          alt="San Francisco"
+          fill
+          style={{ objectFit: 'cover' }}
+          quality={100}
+          className="opacity-50"
         />
       </div>
       <div className="z-10 m-auto pl-10">
@@ -32,6 +32,9 @@ function Home() {
         {tiles.map((tile, index) => (
           <Tile key={index} title={tile.title} path={tile.path} />
         ))}
+      </div>
+      <div className="absolute top-4 left-4 z-10">
+        <Tile title="About Us" path="/AboutUs" />
       </div>
       <footer className="absolute bottom-0 left-0 right-0 z-10 text-center p-4">
         <p className="text-sm">
