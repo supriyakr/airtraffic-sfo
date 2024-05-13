@@ -23,6 +23,27 @@ async function getPeakMonthsDomestic() {
         activity_period: "asc",
       },
     });
+   
+    const groupByAndSum = (arr, groupBy, sumProp) => {
+      return arr.reduce((acc, obj) => {
+        const key = obj[groupBy];
+        const value = obj[sumProp];
+        acc[key] = (acc[key] || 0) + value;
+        return acc;
+      }, {});
+    };
+      
+      const result = groupByAndSum(peakMonths, 'activity_period', 'passenger_count');
+      const formattedResult = Object.entries(result).map(([month, passenger_count]) => ({
+        month,
+        passenger_count
+      }));
+      console.log("formattedResult",formattedResult);
+      return formattedResult;
+ }
+ catch(err){
+     console.error(err);
+ }
 
     const monthNames = [
       "Jan",
@@ -151,6 +172,7 @@ export default async function PeakTravel() {
   const getDataDomestic = await getPeakMonthsDomestic();
   
   return (
+
     <div className="min-h-screen flex bg-gray-900 text-white p-10">
     <div className="flex flex-col items-center w-full">
       <h1 className="text-3xl font-bold mb-20">Peak Months Analysis</h1>

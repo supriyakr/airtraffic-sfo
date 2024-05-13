@@ -1,139 +1,67 @@
 "use client";
-import React, { useRef, useEffect } from "react";
-import * as d3 from "d3";
+import React, { useEffect, useRef } from 'react';
+import * as d3 from 'd3';
 
-export default function PassengerTrafficPlot({ trafficData }) {
-  const svgRef = useRef();
+function PassengerTrafficPlot({ terminalTrfc }) {
+    const svgRef = useRef();
 
-  useEffect(() => {
-    if (trafficData) {
-      d3.select(svgRef.current).selectAll("*").remove();
+    useEffect(() => {
+        if (terminalTrfc.length > 0) {
+            const svg = d3.select(svgRef.current);
+            const width = svg.attr('width');
+            const height = svg.attr('height');
+            const radius = Math.min(width, height) / 2;
+            const color = d3.scaleOrdinal(d3.schemeCategory10);
 
-      const margin = { top: 180, right: 150, bottom: 50, left: 60 };
-      const width = 900 - margin.left - margin.right;
-      const height = 500 - margin.top - margin.bottom;
+            // Create a pie chart layout
+            const pie = d3.pie().value(d => d.passenger_count);
 
-      const svg = d3
-        .select(svgRef.current)
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+            // Create an arc generator
+            const arc = d3.arc().innerRadius(0).outerRadius(radius);
 
-      const terminals = Object.keys(trafficData);
-      const boardingAreas = ["A", "B", "C", "D", "E", "F", "G"];
+            // Append a group element for the pie chart
+            const g = svg.append('g').attr('transform', `translate(${width / 2}, ${height / 2})`);
 
-      const x = d3
-        .scaleBand()
-        .domain(terminals)
-        .range([0, width])
-        .padding([0.2]);
+            // Draw each slice
+            const arcs = g.selectAll('arc')
+                .data(pie(terminalTrfc))
+                .enter()
+                .append('g');
 
-      const y = d3.scaleLinear().domain([0, 500000000]).range([height, 0]);
+            const newColorScale = d3.scaleOrdinal().range(['#145C96', '#0EBEDD', '#709FA2', '#D5E7F1']);
 
-      svg.append("g")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x).tickSize(0))
-        .selectAll("text")
-        .style("fill", "white")
-        .style("font-weight", "bold");
+            arcs.append('path')
+                .attr('d', arc)
+                .attr('fill', (d, i) => newColorScale(i))
+                .on('mouseover', function(d) {
+                    if (d.data) {
+                        const { terminal, passenger_count } = d.data;
+                        d3.select(this).transition().duration(200).attr('opacity', 0.7);
+                        svg.append('text')
+                            .attr('class', 'tooltip')
+                            .attr('x', width / 2)
+                            .attr('y', height / 2 - radius / 2)
+                            .attr('text-anchor', 'middle')
+                            .text(`${terminal}: ${passenger_count}`)
+                            .attr('font-size', '14px');
+                    }
+                })
+                .on('mouseout', function() {
+                    d3.select(this).transition().duration(200).attr('opacity', 1);
+                    svg.select('.tooltip').remove();
+                });
 
-      svg.append("g")
-        .call(d3.axisLeft(y).tickFormat(d => `${d / 1000}K`))
-        .selectAll("text")
-        .style("fill", "white")
-        .style("font-weight", "bold");
+            arcs.append('text')
+                .attr('transform', d => `translate(${arc.centroid(d)})`)
+                .attr('text-anchor', 'middle')
+                .text(d => `${d.data.terminal}\n(${((d.endAngle - d.startAngle) / (2 * Math.PI) * 100).toFixed(0)}%)`);
+        }
+    }, [terminalTrfc]);
 
-      const color = d3.scaleOrdinal()
-        .domain(boardingAreas)
-        .range(d3.schemeTableau10);
-
-      const stackedData = d3.stack()
-        .keys(boardingAreas)
-        .value((d, key) => d[1][key])(Object.entries(trafficData));
-
-      // Tooltip
-      const tooltip = d3.select("body")
-        .append("div")
-        .style("position", "absolute")
-        .style("visibility", "hidden")
-        .style("background-color", "white")
-        .style("border", "solid")
-        .style("border-width", "1px")
-        .style("border-radius", "5px")
-        .style("padding", "10px")
-        .style("font-size", "12px")
-        .style("color", "black");
-
-      svg.append("g")
-        .selectAll("g")
-        .data(stackedData)
-        .join("g")
-        .attr("fill", d => color(d.key))
-        .selectAll("rect")
-        .data(d => d)
-        .join("rect")
-        .attr("x", d => x(d.data[0]))
-        .attr("y", d => y(d[1]))
-        .attr("height", d => y(d[0]) - y(d[1]))
-        .attr("width", x.bandwidth())
-        .on("mouseover", function(event, d) {
-          tooltip.style("visibility", "visible");
-        })
-        .on("mousemove", function(event, d) {
-          const terminal = d.data[0];
-          const boardingArea = this.parentNode.__data__.key;
-          const passengers = d[1] - d[0];
-          tooltip.html(`Terminal: ${terminal}<br>Boarding Area: ${boardingArea}<br>Passengers: ${passengers}`)
-            .style("top", `${event.pageY - 50}px`)
-            .style("left", `${event.pageX + 20}px`);
-        })
-        .on("mouseout", function() {
-          tooltip.style("visibility", "hidden");
-        });
-
-      const legend = svg.append("g")
-        .attr("transform", `translate(${width + 20}, 20)`);
-
-      legend.append("text")
-        .attr("x", 0)
-        .attr("y", -10)
-        .text("Boarding Areas:")
-        .style("font-size", "14px")
-        .style("fill", "white")
-        .style("font-weight", "bold")
-        .attr("alignment-baseline", "middle");
-
-      boardingAreas.forEach((key, i) => {
-        legend.append("rect")
-          .attr("x", 0)
-          .attr("y", i * 20)
-          .attr("width", 10)
-          .attr("height", 10)
-          .attr("fill", color(key));
-
-        legend.append("text")
-          .attr("x", 20)
-          .attr("y", i * 20 + 9)
-          .text(key)
-          .style("font-size", "12px")
-          .style("fill", "white")
-          .style("font-weight", "bold")
-          .attr("alignment-baseline", "middle");
-      });
-
-      svg.append("text")
-        .attr("x", width / 2)
-        .attr("y", 0 - margin.top / 2)
-        .attr("text-anchor", "middle")
-        .style("font-size", "16px")
-        .style("text-decoration", "underline")
-        .style("fill", "white")
-        .style("font-weight", "bold")
-        .text(" P   Didd   Distribution of Passenger Traffic across Terminals and Boarding Areas at San Francisco International Airport")
-        .attr("dy", "-2em");
-    }
-  }, [trafficData]);
-
-  return <svg ref={svgRef}></svg>;
+    return (
+        <svg ref={svgRef} width={500} height={500}></svg>
+    );
 }
+
+export default PassengerTrafficPlot;
+
