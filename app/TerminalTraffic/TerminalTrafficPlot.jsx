@@ -15,7 +15,7 @@ function TerminalTrafficPlot({ terminalTrfc }) {
 
             const width = +svg.attr('width');
             const height = +svg.attr('height');
-            const margin = { top: 20, right: 30, bottom: 100, left: 40 };  // Adjusted bottom margin for legend
+            const margin = { top: 20, right: 30, bottom: 120, left: 40 };  // Adjusted bottom margin for legend
             const innerWidth = width - margin.left - margin.right;
             const innerHeight = height - margin.top - margin.bottom;
 
@@ -63,7 +63,7 @@ function TerminalTrafficPlot({ terminalTrfc }) {
 
             // Add legend below the graph
             const legend = svg.append('g')
-                .attr('transform', `translate(${(width - margin.left - margin.right) / 2}, ${height - margin.bottom + 40})`);
+                .attr('transform', `translate(${width / 2 - 150}, ${height - margin.bottom + 40})`); // Centered and adjusted for spacing
 
             const legendData = [
                 { label: 'Domestic Passengers', color: '#003F72' },
@@ -74,7 +74,7 @@ function TerminalTrafficPlot({ terminalTrfc }) {
                 .data(legendData)
                 .enter()
                 .append('rect')
-                .attr('x', (d, i) => i * 160)
+                .attr('x', (d, i) => i * 200) // Adjusted spacing
                 .attr('y', 0)
                 .attr('width', 18)
                 .attr('height', 18)
@@ -84,7 +84,7 @@ function TerminalTrafficPlot({ terminalTrfc }) {
                 .data(legendData)
                 .enter()
                 .append('text')
-                .attr('x', (d, i) => i * 160 + 24)
+                .attr('x', (d, i) => i * 200 + 24) // Adjusted spacing
                 .attr('y', 9)
                 .attr('dy', '0.35em')
                 .text(d => d.label);
