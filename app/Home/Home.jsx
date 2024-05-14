@@ -7,9 +7,9 @@ function Home() {
   const tiles = [
     { title: 'Travel Trends Across Months', path: '/PeakTravel' },
     { title: 'International vs Domestic Traffic across Terminals', path: '/TerminalTraffic' },
+    { title: 'Passenger Traffic across Terminals', path: '/PassengerTraffic' },
     { title: 'Airlines Distribution in Flight Traffic', path: '/MostFrequentAirlines' },
     { title: 'Destination Distribution of Departing Flights', path: '/MostFrequentDestinations' },
-    { title: 'Passenger Traffic across Terminals', path: '/PassengerTraffic' },
     { title: 'Departing vs Arriving Flight Traffic', path: '/EnplanedDeplaned' },
   ];
 
