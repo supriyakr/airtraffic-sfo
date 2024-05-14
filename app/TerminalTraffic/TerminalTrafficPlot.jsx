@@ -15,7 +15,7 @@ function TerminalTrafficPlot({ terminalTrfc }) {
 
             const width = +svg.attr('width');
             const height = +svg.attr('height');
-            const margin = { top: 20, right: 30, bottom: 60, left: 40 };
+            const margin = { top: 20, right: 30, bottom: 100, left: 40 };  // Adjusted bottom margin for legend
             const innerWidth = width - margin.left - margin.right;
             const innerHeight = height - margin.top - margin.bottom;
 
@@ -61,14 +61,40 @@ function TerminalTrafficPlot({ terminalTrfc }) {
               })
               .on('mouseout', () => tooltip.style('opacity', 0));
 
-            // Add legend and other components as before
+            // Add legend below the graph
+            const legend = svg.append('g')
+                .attr('transform', `translate(${(width - margin.left - margin.right) / 2}, ${height - margin.bottom + 40})`);
+
+            const legendData = [
+                { label: 'Domestic Passengers', color: '#003F72' },
+                { label: 'International Passengers', color: '#709FA2' }
+            ];
+
+            legend.selectAll('rect')
+                .data(legendData)
+                .enter()
+                .append('rect')
+                .attr('x', (d, i) => i * 160)
+                .attr('y', 0)
+                .attr('width', 18)
+                .attr('height', 18)
+                .attr('fill', d => d.color);
+
+            legend.selectAll('text')
+                .data(legendData)
+                .enter()
+                .append('text')
+                .attr('x', (d, i) => i * 160 + 24)
+                .attr('y', 9)
+                .attr('dy', '0.35em')
+                .text(d => d.label);
         }
     }, [terminalTrfc]);
 
     return (
         <>
             <svg ref={svgRef} width={800} height={600}></svg>
-            <div ref={tooltipRef} className="tooltip"></div>
+            <div ref={tooltipRef} className="tooltip" style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', background: 'white', padding: '5px', borderRadius: '3px', border: '1px solid #ccc' }}></div>
         </>
     );
 }
